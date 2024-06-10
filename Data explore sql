@@ -158,3 +158,32 @@ GROUP BY
 ORDER BY
     total_gasto DESC
 LIMIT 1;
+
+# Qual empresa que tem mais funcionarios que consomem sobremesas 
+no restaurante por ano 
+--?
+
+SELECT e.nome_empresa, YEAR(ms.data_hora_entrada) AS ano, COUNT(DISTINCT c.id_cliente) AS numero_de_funcionarios
+FROM tb_empresa e
+JOIN tb_beneficio b ON e.codigo_empresa = b.codigo_empresa
+JOIN tb_cliente c ON b.codigo_funcionario = c.id_cliente
+JOIN tb_mesa ms ON c.id_cliente = ms.id_cliente
+JOIN tb_pedido pd ON ms.codigo_mesa = pd.codigo_mesa
+JOIN tb_prato p ON pd.codigo_prato = p.codigo_prato
+JOIN tb_tipo_prato tp ON p.codigo_tipo_prato = tp.codigo_tipo_prato
+WHERE tp.nome_tipo_prato = 'Sobremesa'
+GROUP BY e.nome_empresa, YEAR(ms.data_hora_entrada)
+ORDER BY COUNT(DISTINCT c.id_cliente) DESC
+LIMIT 1
+
+# Qual a empresa que tem mais funcionarios como clientes 
+do restaurante 
+--?
+
+SELECT e.nome_empresa, COUNT(*) AS numero_de_funcionarios
+FROM tb_empresa e
+LEFT JOIN tb_beneficio b ON e.codigo_empresa = b.codigo_empresa
+LEFT JOIN tb_cliente c ON b.email_funcionario = c.email_cliente
+GROUP BY e.nome_empresa
+ORDER BY numero_de_funcionarios DESC
+LIMIT 1;
